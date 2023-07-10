@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npm start",
-    "start": "node --inspect sever.js"
+    "start": "node --inspect app.js"  
   },
   "repository": {
     "type": "git",
@@ -17,6 +17,8 @@
   "author": "Teja7789",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "lodash": "^4.17.21",
+    "nodemon": "^3.0.1"
   }
 }
