@@ -44,6 +44,8 @@ switch(req.url){
         }
         else{
             //  res.write(fileData); // For multiple lines use  res.write == res.write(FileData)
+            debugger;
+            console.log("hello world");
             res.end(fileData);    //For single lines use  res.end== res.end(FileData)
         }
     })
