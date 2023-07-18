@@ -17,9 +17,11 @@
   "author": "Teja7789",
   "license": "MIT",
   "dependencies": {
+    "email-validator": "^2.0.4",
     "express": "^4.18.2",
     "lodash": "^4.17.21",
     "mongoose": "^7.3.4",
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "validator": "^13.9.0"
   }
 }
