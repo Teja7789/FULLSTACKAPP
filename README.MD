@@ -302,3 +302,7 @@ res.json({
     data:obj
 });
 }
+
+step8: backend connecting  to frontend
+
+signup form- post request to backend  //post api need to updated by login page
