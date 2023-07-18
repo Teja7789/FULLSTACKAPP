@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npm start",
-    "start": "node --inspect miniApps.js"  
+    "start": "node --inspect apps.js"
   },
   "repository": {
     "type": "git",
