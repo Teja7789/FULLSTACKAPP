@@ -4,10 +4,14 @@ const app = express() //invoke
 const mongoose = require('mongoose')
 //npm validator
 const emailValidator = require('email-validator')
+//cookies
+const cookiesParser =require('cookie-parser');
 //middleware func -- post, front -> json
 app.use(express.json()); //global middleware
 //port number , host , callback func
 app.listen(3000);
+//cookies
+app.use(cookiesParser());
 
 // HTTP METHODS
 
@@ -43,6 +47,16 @@ userRouter
 .post(postUser)
 .patch(updateUser)
 .delete(deleteUser)
+
+//cookies
+userRouter
+.route('/getCookies')
+.get(getCookies)
+
+userRouter
+.route('/setCookies')
+.get(setCookies)
+
 
 userRouter 
 .route('/:id')
@@ -137,6 +151,20 @@ function postSignUp(req,res){
     });
 }
 
+//cookies
+function getCookies(req,res){
+  let cookie = req.cookies;
+  console.log(cookie);
+  res.send("cookies is received")
+}
+
+function setCookies(req,res){
+//   res.setHeader('Set-Cookie','isLoggedIn=true');
+res.cookie('isLoggedIn',true,{maxAge:1000*60*60*24, secure:true, httpOnly:true});
+res.cookie('isPrimeMember',true);
+  res.send('cookies has been set ');
+}
+
 //mongoose
 const db_link ='mongodb+srv://teja128ce:CMcmkeMRoJLUvHk4@cluster0.cogw3qy.mongodb.net/';
 mongoose.connect(db_link)
@@ -202,7 +230,7 @@ const userModel = mongoose.model('userModel',userSchema);
 (async function createUser(){
 let user={
     name:"test1a",
-    email:"test1c@gmail.com",
+    email:"test1e@gmail.com",
     password:'m@123456789',
     confirmPassword:'m@123456789',
 };
