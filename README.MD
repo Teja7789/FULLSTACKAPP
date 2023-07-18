@@ -13,7 +13,7 @@ Debug
   },
 step 4: expressSetup = npm i express npm i nodemon npm i lodash and  changed "start": "node --inspect sever.js"   to  "start": "node --inspect app.js"  
 
-step 5: Express Intro code 
+step 5: Express Intro code === app.js 
 const express = require('express') // import
 const app = express() //invoke
 
@@ -62,3 +62,59 @@ app.use((req, res)  => {
  //use keyword for 404  and .statusCode(404) - this chaining is used
   res.status(404).sendFile('./views/404.html',{root:__dirname})
 });
+
+step 5 : expressHTTPMethods - methods.js === express get , post, patch and delete 
+*imp - http://localhost:3000/user
+const express = require('express') // import
+const app = express() //invoke
+
+//port number , host , callback func
+app.listen(3000);
+
+// HTTP METHODS
+
+let users = {};
+
+// GET method
+
+app.get('/user',(req,res)=>{
+    // console.log(req,"req");
+    res.send(users);
+})
+
+// POST method
+
+app.post('/user',(req,res)=>{
+    console.log(req.body);
+    users=req.body;
+    res.json({
+        message:"data received sucessfully",
+        user:req.body
+    });
+});
+
+// PATCH method - update
+
+app.patch('/user',(req,res)=>{
+    console.log("res.body",req.body);
+    //update data in user obj
+    let dataToBeUpdated=req.body;
+    for(key in dataToBeUpdated){
+        users[key]=dataToBeUpdated[key];
+    }
+   res.json({
+    message:"data updated successfully"
+   })
+});
+
+// DELETE method
+
+app.delete('/user',(res,req)=>{
+users={};
+res.json({
+    message:"data deleted successfully"
+})
+})
+
+step 6 : Params(parameters) == http://localhost:3000/user/:id and queries == http://localhost:3000/user/iphone/?name=jaiRam&&id=3
+

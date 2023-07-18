@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npm start",
-    "start": "node --inspect app.js"  
+    "start": "node --inspect paramsAndQueries.js"  
   },
   "repository": {
     "type": "git",
