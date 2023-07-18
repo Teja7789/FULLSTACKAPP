@@ -462,3 +462,235 @@ function postSignUp(req,res){
         data:obj
     });
 }
+
+step10: mongoDB == express mongodb
+username:teja128ce
+password:CMcmkeMRoJLUvHk4
+Where would you like to connect from?
+Enable access for any network(s) that need to read and write data to your cluster.
+
+local
+My Local Environment
+Use this to add network IP addresses to the IP Access List. This can be modified at any time.
+ADVANCED
+
+cloud
+Cloud Environment
+Use this to configure network access between Atlas and your cloud or on-premise environment. Specifically, set up IP Access Lists, Network Peering, and Private Endpoints.
+We added your current IP address. You can connect to your cluster locally from this device.
+
+Set your network security with any of the following options
+Only an IP address you add to your Access List will be able to connect to your project's clusters. You can manage existing IP entries via the Network Access Page.
+
+IP Address
+Enter IP Address
+Description
+Enter description
+
+Add My Current IP Address
+
+Add Entry
+IP Access List
+
+Description
+
+
+IP Address	Comment	Status	Actions
+0.0.0.0/0  (includes your current IP address)
+
+My IP AddressYou will only be able to connect to your cluster from the following list of IP Addresses:
+
+IP Address	Comment	Status	Actions
+0.0.0.0/0  (includes your current IP address)  (includes your current IP address)
+
+connect tab: mongodb+srv://teja128ce:<password>@cluster0.cogw3qy.mongodb.net/
+
+//foodApp project - userModels
+code:
+const express = require('express') // import
+const app = express() //invoke
+//mongoose
+const mongoose = require('mongoose')
+//middleware func -- post, front -> json
+app.use(express.json()); //global middleware
+//port number , host , callback func
+app.listen(3000);
+
+// HTTP METHODS
+
+let users = [{
+    "id":1,
+    "name":"abishek"
+},
+{
+    "id":2,
+    "name":"jaiRam"
+},
+{
+    "id":3,
+    "name":"max"
+}
+
+
+
+
+];
+//creating Mini App
+const userRouter=express.Router();
+//signUp route
+const authRouter=express.Router();
+//base route , router to use
+app.use('/user',userRouter);
+app.use('/auth',authRouter);
+
+
+userRouter
+.route('/')
+.get(getUser)
+.post(postUser)
+.patch(updateUser)
+.delete(deleteUser)
+
+userRouter 
+.route('/:id')
+.get(getUserById);
+//middleware
+authRouter
+.route('/signup')
+.get(middleware1,getSignUp,middleware2) //path specific middleware
+.post(postSignUp);
+//middleware
+function middleware1(req,res,next){
+    console.log('middleware1 encourted');
+    next();
+}
+function middleware2(req,res){
+    console.log('middleware2 encourted');
+    // next();
+    console.log("middleware2 is ended req res cycle");
+    res.sendFile('/public/index.html',{root:__dirname});
+}
+//get method
+
+function getUser(req,res){
+    // console.log(req.query,"req");
+    res.send(users);
+};
+
+//post method
+
+function postUser(req,res){
+    console.log(req.body);
+    users=req.body;
+    res.json({
+        message:"data received sucessfully",
+        user:req.body
+    });
+};
+
+//update method
+
+function updateUser(req,res){
+    console.log("res.body",req.body);
+    //update data in user obj
+    let dataToBeUpdated=req.body;
+    for(key in dataToBeUpdated){
+        users[key]=dataToBeUpdated[key];
+    }
+   res.json({
+    message:"data updated successfully"
+   })
+};
+
+//delete user
+function deleteUser(res,req){
+    users={};
+    res.json({
+        message:"data deleted successfully"
+    })
+    };
+
+    //params id
+function getUserById(req,res){
+    console.log(req.params.id);
+   let paramId=req.params.id;
+   let obj={};
+   for(let i=0;i<users.length;i++){
+    if(users[i]['id']==paramId){
+        obj=users[i];
+    }
+   }
+res.json({
+    message:"user data received successfully",
+    data:obj
+});
+}
+//signup
+// middleware
+function getSignUp(req,res,next){
+    console.log("get user called");
+    next();
+// res.sendFile('/Users/SIVANANDINI/Desktop/FullstackApp/foodApp/public/index.html');
+// res.sendFile('/public/index.html',{root:__dirname})
+}
+
+function postSignUp(req,res){
+    let obj=req.body;
+    // const {  email,name, password } = req.body
+    console.log(obj,"backend");
+    res.json({
+        message:"user signed up",
+        data:obj
+    });
+}
+
+//mongoose
+const db_link ='mongodb+srv://teja128ce:CMcmkeMRoJLUvHk4@cluster0.cogw3qy.mongodb.net/';
+mongoose.connect(db_link)
+.then(function(db){
+    // console.log(db) all mongodb properties
+    console.log('db connected')
+})
+.catch(function(err){
+console.log(err)
+});
+
+//Schema
+
+const userSchema=mongoose.Schema({
+    name:{
+        type:String,
+        require: true
+    },
+    email:{
+        type:String,
+        require: true,
+        unique:true
+    },
+    password:{
+        type:String,
+        require: true,
+        minLength:8
+    },
+    confirmPassword:{
+        type:String,
+        require: true,
+        minLength:8
+    }
+
+});
+
+//modal
+const userModel = mongoose.model('userModel',userSchema);
+
+//backend to frontend obj
+(async function createUser(){
+let user={
+    name:"Mani",
+    email:"tested@gmail.com",
+    password:'123456789',
+    confirmPassword:'123456789',
+};
+let data = await userModel.create(user);
+console.log(data);
+})()

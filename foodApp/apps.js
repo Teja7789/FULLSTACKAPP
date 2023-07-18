@@ -1,5 +1,7 @@
 const express = require('express') // import
 const app = express() //invoke
+//mongoose
+const mongoose = require('mongoose')
 //middleware func -- post, front -> json
 app.use(express.json()); //global middleware
 //port number , host , callback func
@@ -132,3 +134,54 @@ function postSignUp(req,res){
         data:obj
     });
 }
+
+//mongoose
+const db_link ='mongodb+srv://teja128ce:CMcmkeMRoJLUvHk4@cluster0.cogw3qy.mongodb.net/';
+mongoose.connect(db_link)
+.then(function(db){
+    // console.log(db) all mongodb properties
+    console.log('db connected')
+})
+.catch(function(err){
+console.log(err)
+});
+
+//Schema
+
+const userSchema=mongoose.Schema({
+    name:{
+        type:String,
+        require: true
+    },
+    email:{
+        type:String,
+        require: true,
+        unique:true
+    },
+    password:{
+        type:String,
+        require: true,
+        minLength:8
+    },
+    confirmPassword:{
+        type:String,
+        require: true,
+        minLength:8
+    }
+
+});
+
+//modal
+const userModel = mongoose.model('userModel',userSchema);
+
+//backend to frontend obj
+(async function createUser(){
+let user={
+    name:"Mani",
+    email:"tested@gmail.com",
+    password:'123456789',
+    confirmPassword:'123456789',
+};
+let data = await userModel.create(user);
+console.log(data);
+})()
