@@ -24,26 +24,63 @@ let users = [{
 
 ];
 
+//creating Mini App
+const userRouter=express.Router();
+//base route , router to use
+app.use('/user',userRouter);
 
-app.get('/user',(req,res)=>{
-    console.log(req.query,"req"); //queries
+userRouter
+.route('/')
+.get(getUser)
+.post(postUser)
+.patch(updateUser)
+.delete(deleteUser)
+
+userRouter
+.route('/:id')
+.get(getUserById);
+
+// // GET method
+
+// app.get('/user',)
+
+// // POST method
+
+// app.post('/user',);
+
+// // PATCH method - update
+
+// app.patch('/user',);
+
+// // DELETE method
+
+// app.delete('/user',)
+
+//params 
+// app.get('user/:name',)
+
+
+//get method
+
+function getUser(req,res){
+    // console.log(req.query,"req");
     res.send(users);
-})
+};
 
-// POST method
+//post method
 
-app.post('/user',(req,res)=>{
+function postUser(req,res){
     console.log(req.body);
     users=req.body;
     res.json({
         message:"data received sucessfully",
         user:req.body
     });
-});
+};
 
-// PATCH method - update
+//update method
 
-app.patch('/user',(req,res)=>{
+function updateUser(req,res){
     console.log("res.body",req.body);
     //update data in user obj
     let dataToBeUpdated=req.body;
@@ -53,19 +90,18 @@ app.patch('/user',(req,res)=>{
    res.json({
     message:"data updated successfully"
    })
-});
+};
 
-// DELETE method
+//delete user
+function deleteUser(res,req){
+    users={};
+    res.json({
+        message:"data deleted successfully"
+    })
+    };
 
-app.delete('/user',(res,req)=>{
-users={};
-res.json({
-    message:"data deleted successfully"
-})
-})
-
-//params == getuserById
-app.get('user/:name',(req,res)=>{
+    //params id
+function getUserById(req,res){
     console.log(req.params.id);
    let paramId=req.params.id;
    let obj={};
@@ -78,4 +114,4 @@ res.json({
     message:"re received",
     data:obj
 });
-});
+}
