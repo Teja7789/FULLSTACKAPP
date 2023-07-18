@@ -2,6 +2,8 @@ const express = require('express') // import
 const app = express() //invoke
 //mongoose
 const mongoose = require('mongoose')
+//npm validator
+const emailValidator = require('email-validator')
 //middleware func -- post, front -> json
 app.use(express.json()); //global middleware
 //port number , host , callback func
@@ -128,7 +130,7 @@ function getSignUp(req,res,next){
 function postSignUp(req,res){
     let obj=req.body;
     // const {  email,name, password } = req.body
-    console.log(obj,"backend");
+    // console.log(obj,"backend");
     res.json({
         message:"user signed up",
         data:obj
@@ -156,7 +158,10 @@ const userSchema=mongoose.Schema({
     email:{
         type:String,
         require: true,
-        unique:true
+        unique:true,
+        validate: function(){
+            return emailValidator.validate(this.email); //unique email
+        }//regex -- libarary
     },
     password:{
         type:String,
@@ -166,9 +171,28 @@ const userSchema=mongoose.Schema({
     confirmPassword:{
         type:String,
         require: true,
-        minLength:8
+        minLength:8,
+        validate: function(){
+            return this.confirmPassword==this.password;
+        }
     }
 
+});
+
+//hooks
+// pre hooks - removes - before saving in db
+// userSchema.pre('save',function(){
+//     console.log('before saving in database',this)
+// });
+//conformpassword == password same db not store conformPassword
+
+userSchema.pre('save',function(){
+    // console.log('before saving in database',this)
+    this.confirmPassword=undefined;
+});
+// post hooks -  after saving in db
+userSchema.post('save',function(doc){
+    console.log('after saving in database',doc)
 });
 
 //modal
@@ -177,11 +201,11 @@ const userModel = mongoose.model('userModel',userSchema);
 //backend to frontend obj
 (async function createUser(){
 let user={
-    name:"Mani",
-    email:"tested@gmail.com",
-    password:'123456789',
-    confirmPassword:'123456789',
+    name:"test1a",
+    email:"test1c@gmail.com",
+    password:'m@123456789',
+    confirmPassword:'m@123456789',
 };
 let data = await userModel.create(user);
-console.log(data);
+// console.log(data);
 })()
