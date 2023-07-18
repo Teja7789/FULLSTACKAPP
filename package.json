@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npm start",
-    "start": "node --inspect apps.js"
+    "start": "node --inspect ./foodApp/apps.js"
   },
   "repository": {
     "type": "git",
