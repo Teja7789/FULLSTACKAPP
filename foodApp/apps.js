@@ -1,6 +1,7 @@
 const express = require('express') // import
 const app = express() //invoke
-
+//middleware func -- post, front -> json
+app.use(express.json()); //global middleware
 //port number , host , callback func
 app.listen(3000);
 
@@ -39,17 +40,25 @@ userRouter
 .patch(updateUser)
 .delete(deleteUser)
 
-userRouter
+userRouter 
 .route('/:id')
 .get(getUserById);
-
+//middleware
 authRouter
 .route('/signup')
-.get(getSignUp)
+.get(middleware1,getSignUp,middleware2) //path specific middleware
 .post(postSignUp);
-
-
-
+//middleware
+function middleware1(req,res,next){
+    console.log('middleware1 encourted');
+    next();
+}
+function middleware2(req,res){
+    console.log('middleware2 encourted');
+    // next();
+    console.log("middleware2 is ended req res cycle");
+    res.sendFile('/public/index.html',{root:__dirname});
+}
 //get method
 
 function getUser(req,res){
@@ -106,9 +115,12 @@ res.json({
 });
 }
 //signup
-function getSignUp(req,res){
+// middleware
+function getSignUp(req,res,next){
+    console.log("get user called");
+    next();
 // res.sendFile('/Users/SIVANANDINI/Desktop/FullstackApp/foodApp/public/index.html');
-res.sendFile('/public/index.html',{root:__dirname})
+// res.sendFile('/public/index.html',{root:__dirname})
 }
 
 function postSignUp(req,res){
@@ -117,6 +129,6 @@ function postSignUp(req,res){
     console.log(obj,"backend");
     res.json({
         message:"user signed up",
-        resp:obj
+        data:obj
     });
 }
