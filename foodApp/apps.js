@@ -4,10 +4,14 @@ const app = express() //invoke
 const mongoose = require('mongoose')
 //npm validator
 const emailValidator = require('email-validator')
+//cookies
+const cookiesParser =require('cookie-parser');
 //middleware func -- post, front -> json
 app.use(express.json()); //global middleware
 //port number , host , callback func
 app.listen(3000);
+//cookies
+app.use(cookiesParser());
 
 // HTTP METHODS
 
@@ -43,6 +47,16 @@ userRouter
 .post(postUser)
 .patch(updateUser)
 .delete(deleteUser)
+
+//cookies
+userRouter
+.route('/getCookies')
+.get(getCookies)
+
+userRouter
+.route('/setCookies')
+.get(setCookies)
+
 
 userRouter 
 .route('/:id')
@@ -149,6 +163,20 @@ async function postSignUp(req,res){
         // data:obj
         dataObj: user
     });
+}
+
+//cookies
+function getCookies(req,res){
+  let cookie = req.cookies;
+  console.log(cookie);
+  res.send("cookies is received")
+}
+
+function setCookies(req,res){
+//   res.setHeader('Set-Cookie','isLoggedIn=true');
+res.cookie('isLoggedIn',true,{maxAge:1000*60*60*24, secure:true, httpOnly:true});
+res.cookie('isPrimeMember',true);
+  res.send('cookies has been set ');
 }
 
 //mongoose

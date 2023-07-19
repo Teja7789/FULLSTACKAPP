@@ -901,7 +901,7 @@ const userModel = mongoose.model('userModel',userSchema);
 (async function createUser(){
 let user={
     name:"test1a",
-    email:"test1c@gmail.com",
+    email:"test1d@gmail.com",
     password:'m@123456789',
     confirmPassword:'m@123456789',
 };
