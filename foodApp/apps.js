@@ -15,23 +15,23 @@ app.use(cookiesParser());
 
 // HTTP METHODS
 
-let users = [{
-    "id":1,
-    "name":"abishek"
-},
-{
-    "id":2,
-    "name":"jaiRam"
-},
-{
-    "id":3,
-    "name":"max"
-}
+// let users = [{
+//     "id":1,
+//     "name":"abishek"
+// },
+// {
+//     "id":2,
+//     "name":"jaiRam"
+// },
+// {
+//     "id":3,
+//     "name":"max"
+// }
 
 
 
 
-];
+// ];
 //creating Mini App
 const userRouter=express.Router();
 //signUp route
@@ -79,9 +79,12 @@ function middleware2(req,res){
 }
 //get method
 
-function getUser(req,res){
-    // console.log(req.query,"req");
-    res.send(users);
+async function getUser(req,res){
+    let allUsers=await userModel.find();
+    // let allUsers=await userModel.findOne({name:"Mani"}); //particular user is get
+    // res.send(users);
+    res.json({message:'list of all users',
+data:allUsers});
 };
 
 //post method
@@ -97,24 +100,31 @@ function postUser(req,res){
 
 //update method
 
-function updateUser(req,res){
+async function updateUser(req,res){
     console.log("res.body",req.body);
     //update data in user obj
-    let dataToBeUpdated=req.body;
-    for(key in dataToBeUpdated){
-        users[key]=dataToBeUpdated[key];
-    }
+    // let dataToBeUpdated=req.body;
+    // for(key in dataToBeUpdated){
+    //     users[key]=dataToBeUpdated[key];
+    // }
+   let  dataToBeUpdated=req.body;
+    let user= await userModel.findOneAndUpdate({email:'testked12@gmail.com'},dataToBeUpdated);
    res.json({
-    message:"data updated successfully"
+    message:"data updated successfully",
+    data:user
    })
 };
 
 //delete user
-function deleteUser(res,req){
-    users={};
+async function deleteUser(req,res){
+    // users={};
+    // let user=await userModel.findOneAndDelete({email:'testked12@gmail.com'});
+    let dataToBeDeleted=req.body;
+    let user=await userModel.findOneAndDelete(dataToBeDeleted); //delete from frontend
     res.json({
-        message:"data deleted successfully"
-    })
+        message:"data deleted successfully",
+        data:user
+    });
     };
 
     //params id
@@ -141,13 +151,17 @@ function getSignUp(req,res,next){
 // res.sendFile('/public/index.html',{root:__dirname})
 }
 
-function postSignUp(req,res){
-    let obj=req.body;
+async function postSignUp(req,res){
+    // let obj=req.body;
+    let dataObj = req.body;
+    let user=await userModel.create(dataObj);
     // const {  email,name, password } = req.body
     // console.log(obj,"backend");
+    console.log(user,"backend");
     res.json({
         message:"user signed up",
-        data:obj
+        // data:obj
+        dataObj: user
     });
 }
 
@@ -227,13 +241,13 @@ userSchema.post('save',function(doc){
 const userModel = mongoose.model('userModel',userSchema);
 
 //backend to frontend obj
-(async function createUser(){
-let user={
-    name:"test1a",
-    email:"test1e@gmail.com",
-    password:'m@123456789',
-    confirmPassword:'m@123456789',
-};
-let data = await userModel.create(user);
-// console.log(data);
-})()
+// (async function createUser(){
+// let user={
+//     name:"test1a",
+//     email:"test1c@gmail.com",
+//     password:'m@123456789',
+//     confirmPassword:'m@123456789',
+// };
+// let data = await userModel.create(user);
+// // console.log(data);
+// })()
