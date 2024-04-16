@@ -1,0 +1,31 @@
+{
+  "name": "fullstackapp",
+  "version": "1.0.0",
+  "description": "\"The meta internet\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm start",
+    "start": "nodemon  ./ahaTickets/Practice/Express/ONDC/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "Teja7789"
+  },
+  "keywords": [
+    "Teja@283261$"
+  ],
+  "author": "Teja7789",
+  "license": "MIT",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "email-validator": "^2.0.4",
+    "express": "^4.18.2",
+    "lodash": "^4.17.21",
+    "mongoose": "^7.3.4",
+    "nodemon": "^3.0.1",
+    "pg": "^8.11.3",
+    "pgtools": "^1.0.1",
+    "validator": "^13.9.0"
+  }
+}
