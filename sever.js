@@ -21,12 +21,20 @@ let path ='./views';
 switch(req.url){
     case '/':
         path+='/index.html'
+        res.statusCode=200;
         break;
         case '/about':
             path+='/about.html'
+            res.statusCode=200;
+            break;
+            case '/about-me':
+            res.statusCode=301; // statusCode = 301 Moved Permanently
+            res.setHeader('Location','/about'); //redirect requires setHeader
+            res.end();
             break;
             default:
                 path+='/404.html'
+                res.statusCode=404;
                 break;
 };
 
@@ -36,6 +44,8 @@ switch(req.url){
         }
         else{
             //  res.write(fileData); // For multiple lines use  res.write == res.write(FileData)
+            debugger;
+            console.log("hello world");
             res.end(fileData);    //For single lines use  res.end== res.end(FileData)
         }
     })
