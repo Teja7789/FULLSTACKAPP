@@ -67,12 +67,12 @@ userSchema.post('save',function(doc){
 //remove hook -- check
 
 //bcrypt
-userSchema.pre('save',async function(){
-    let salt = await bcrypt.genSalt();
-    let hashedString = await bcrypt.hash(this.password,salt);
-console.log(hashedString , "hashedString of Password");
-this.password = hashedString;
-})
+// userSchema.pre('save',async function(){
+//     let salt = await bcrypt.genSalt();
+//     let hashedString = await bcrypt.hash(this.password,salt);
+// console.log(hashedString , "hashedString of Password");
+// this.password = hashedString;
+// })
 
 //modal
 const userModel = mongoose.model('userModel',userSchema);

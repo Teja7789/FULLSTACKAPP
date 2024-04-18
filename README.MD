@@ -1403,3 +1403,175 @@ this.password = hashedString;
 ////bcrypt - output
  $2b$10$BC3MQ7ZSDgXAVAZCU0MZs.9.fLR/G/lbXi51gj1VS9CnLwepKT3T
 ```
+
+## step13:  Login added in authRouter
+
+## AuthRouter.js - loginUser
+```Jsx
+const express = require('express') // import
+const userModel = require('../Models/UserModel');
+//authRouter
+const authRouter=express.Router();
+
+//middleware
+authRouter
+.route('/signup')
+.get(middleware1,getSignUp,middleware2) //path specific middleware
+.post(postSignUp);
+
+authRouter
+.route('/login')
+.get(middleware1,getSignUp,middleware2) //path specific middleware
+.post(loginUser);
+//middleware
+function middleware1(req,res,next){
+    console.log('middleware1 encourted');
+    next();
+}
+function middleware2(req,res){
+    console.log('middleware2 encourted');
+    // next();
+    console.log("middleware2 is ended req res cycle");
+    // res.sendFile('/public/index.html',{root:__dirname});
+}
+//signup
+// middleware
+function getSignUp(req,res,next){
+    console.log("get user called");
+    next();
+// res.sendFile('/Users/SIVANANDINI/Desktop/FullstackApp/foodApp/public/index.html');
+// res.sendFile('/public/index.html',{root:__dirname})
+}
+
+async function postSignUp(req,res){
+    // let obj=req.body;
+    let dataObj = req.body;
+    let user=await userModel.create(dataObj);
+    // const {  email,name, password } = req.body
+    // console.log(obj,"backend");
+    console.log(user,"backend");
+    res.json({
+        message:"user signed up",
+        // data:obj
+        dataObj: user
+    });
+}
+async function loginUser(req,res){
+    try{
+    let data=req.body;
+    if(data.email){
+    let user=await userModel.findOne({email:data.email});
+    if(user){
+        if(user.password==data.password){
+            return res.json({
+                message:"user logined in",
+                userDetails:data
+            })
+        }else{
+            return res.json({
+                message:"wrong crendentials"
+            })
+        }
+    }
+    else{
+        return res.json({
+            message:"user not found"
+        })  
+    }
+}else{
+    return res.json({
+        message:"Empty field found"
+    })   
+}
+     }
+     catch(err){
+return res.json({
+    message:err.message
+})  
+     }
+}
+module.exports = authRouter;
+```
+## UserModel - commented bcrypt code
+```Jsx
+//mongoose
+const mongoose = require('mongoose')
+//npm validator
+const emailValidator = require('email-validator')
+//hashing by bcrypt
+const bcrypt = require('bcrypt');
+//mongoose
+const db_link ='mongodb+srv://teja128ce:CMcmkeMRoJLUvHk4@cluster0.cogw3qy.mongodb.net/';
+mongoose.connect(db_link)
+.then(function(db){
+    // console.log(db) all mongodb properties
+    console.log('db connected')
+})
+.catch(function(err){
+console.log(err)
+});
+
+
+
+//Schema
+
+const userSchema=mongoose.Schema({
+    name:{
+        type:String,
+        require: true
+    },
+    email:{
+        type:String,
+        require: true,
+        unique:true,
+        validate: function(){
+            return emailValidator.validate(this.email); //unique email
+        }//regex -- libarary
+    },
+    password:{
+        type:String,
+        require: true,
+        minLength:8
+    },
+    confirmPassword:{
+        type:String,
+        require: true,
+        minLength:8,
+        validate: function(){
+            return this.confirmPassword==this.password;
+        }
+    }
+
+});
+
+//hooks
+// pre hooks - removes - before saving in db
+// userSchema.pre('save',function(){
+//     console.log('before saving in database',this)
+// });
+//conformpassword == password same db not store conformPassword
+
+userSchema.pre('save',function(){
+    // console.log('before saving in database',this)
+    this.confirmPassword=undefined;
+});
+
+// post hooks -  after saving in db
+userSchema.post('save',function(doc){
+    console.log('after saving in database',doc)
+});
+//remove hook -- check
+
+//bcrypt
+// userSchema.pre('save',async function(){
+//     let salt = await bcrypt.genSalt();
+//     let hashedString = await bcrypt.hash(this.password,salt);
+// console.log(hashedString , "hashedString of Password");
+// this.password = hashedString;
+// })
+
+//modal
+const userModel = mongoose.model('userModel',userSchema);
+
+module.exports = userModel;
+```
