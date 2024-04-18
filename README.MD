@@ -1398,6 +1398,7 @@ userSchema.pre('save',async function(){
     let salt = await bcrypt.genSalt();
     let hashedString = await bcrypt.hash(this.password,salt);
 console.log(hashedString , "hashedString of Password");
+this.password = hashedString;
 });
 ////bcrypt - output
  $2b$10$BC3MQ7ZSDgXAVAZCU0MZs.9.fLR/G/lbXi51gj1VS9CnLwepKT3T

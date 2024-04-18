@@ -71,6 +71,7 @@ userSchema.pre('save',async function(){
     let salt = await bcrypt.genSalt();
     let hashedString = await bcrypt.hash(this.password,salt);
 console.log(hashedString , "hashedString of Password");
+this.password = hashedString;
 })
 
 //modal
