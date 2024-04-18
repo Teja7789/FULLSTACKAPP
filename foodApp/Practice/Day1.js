@@ -1,4 +1,6 @@
 const express = require('express') // import
+//cookies
+const cookie = require('cookie')
 const app = express() //invoke
 //models/userModel
 const  userModel = require("./Models/UserModel.js");
@@ -21,10 +23,6 @@ let users = [{
     "id":3,
     "name":"max"
 }
-
-
-
-
 ];
 //creating Mini App
 const userRouter=express.Router();
@@ -45,6 +43,15 @@ userRouter
 userRouter 
 .route('/:id')
 .get(getUserById);
+//cookies
+userRouter
+.route('/getCookies')
+.get(getCookies)
+
+userRouter
+.route('/setCookies')
+.get(setCookies)
+
 //middleware
 authRouter
 .route('/signup')
@@ -145,4 +152,15 @@ async function postSignUp(req,res){
     });
 }
 
+function getCookies(req,res){
+    // res.setHeader('Set-Cookie','isLoggedIn=true')
+res.cookie('isLoggedIn', true,{maxAge:1000*60*60*24,secure: true, httpOnly: true });
+// res.cookie('isPrimeMember',true)
+res.cookie('cookie has been set');
+}
 
+function setCookies(req,res){
+    let cookies = req.cookie.isLoggedIn;
+    console.log(cookies);
+    res.send('cookie received');
+}
