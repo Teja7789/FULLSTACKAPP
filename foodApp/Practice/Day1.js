@@ -1,9 +1,7 @@
 const express = require('express') // import
 const app = express() //invoke
-//mongoose
-const mongoose = require('mongoose')
-//npm validator
-const emailValidator = require('email-validator')
+//models/userModel
+const  userModel = require("./Models/UserModel.js");
 //middleware func -- post, front -> json
 app.use(express.json()); //global middleware
 //port number , host , callback func
@@ -148,76 +146,3 @@ async function postSignUp(req,res){
 }
 
 
-
-//mongoose
-const db_link ='mongodb+srv://teja128ce:CMcmkeMRoJLUvHk4@cluster0.cogw3qy.mongodb.net/';
-mongoose.connect(db_link)
-.then(function(db){
-    // console.log(db) all mongodb properties
-    console.log('db connected')
-})
-.catch(function(err){
-console.log(err)
-});
-
-//Schema
-
-const userSchema=mongoose.Schema({
-    name:{
-        type:String,
-        require: true
-    },
-    email:{
-        type:String,
-        require: true,
-        unique:true,
-        validate: function(){
-            return emailValidator.validate(this.email); //unique email
-        }//regex -- libarary
-    },
-    password:{
-        type:String,
-        require: true,
-        minLength:8
-    },
-    confirmPassword:{
-        type:String,
-        require: true,
-        minLength:8,
-        validate: function(){
-            return this.confirmPassword==this.password;
-        }
-    }
-
-});
-
-//hooks
-// pre hooks - removes - before saving in db
-// userSchema.pre('save',function(){
-//     console.log('before saving in database',this)
-// });
-//conformpassword == password same db not store conformPassword
-
-userSchema.pre('save',function(){
-    // console.log('before saving in database',this)
-    this.confirmPassword=undefined;
-});
-// post hooks -  after saving in db
-userSchema.post('save',function(doc){
-    console.log('after saving in database',doc)
-});
-
-//modal
-const userModel = mongoose.model('userModel',userSchema);
-
-//backend to frontend obj
-// (async function createUser(){
-// let user={
-//     name:"test1a",
-//     email:"test1df@gmail.com",
-//     password:'m@123456789',
-//     confirmPassword:'m@123456789',
-// };
-// let data = await userModel.create(user);
-// // console.log(data);
-// })()
