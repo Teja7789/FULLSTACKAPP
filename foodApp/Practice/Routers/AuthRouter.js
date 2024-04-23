@@ -2,7 +2,7 @@ const express = require('express') // import
 const userModel = require('../Models/UserModel');
 //authRouter
 const authRouter=express.Router();
-
+const cookie = require('cookie');
 //middleware
 authRouter
 .route('/signup')
@@ -53,10 +53,13 @@ async function loginUser(req,res){
     let user=await userModel.findOne({email:data.email});
     if(user){
         if(user.password==data.password){
+             res.cookie('isLoggedIn',true
+         ,{httpOnly:true,secure: true});
+
             return res.json({
                 message:"user logined in",
                 userDetails:data
-            })
+            });
         }else{
             return res.json({
                 message:"wrong crendentials"
