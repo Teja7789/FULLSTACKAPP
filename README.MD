@@ -1576,7 +1576,7 @@ const userModel = mongoose.model('userModel',userSchema);
 module.exports = userModel;
 ```
 
-## Day8 - cookies - protoctedRoute code
+## step 14 Day8 - cookies - protoctedRoute code
 
 ```Jsx
 //UserRouter.js
@@ -1813,4 +1813,42 @@ function protectedRoute(req,res,next){
     }
 }
 module.exports=protectedRoute;
+```
+
+## step 14 : JWT - (payload,secretKey,algorith) -> Day9 branch
+
+```Jsx
+//authHelper
+const  jwt = require('jsonwebtoken');
+const JWT_KEY = "secretkey";
+function protectedRoute(req,res,next){
+    if(req.cookies.login){ //login is cookie of login function in authRouter
+        console.log(req.cookies.login,"JWT")
+        let isVerified = jwt.verify(req.cookies.login,JWT_KEY); //verify the cookies
+      if(isVerified){
+       next();
+      }else{ res.send("user not  verified");
+    } 
+    }else{
+        return res.json({
+            message:'operation not allowed'
+        });
+    }
+}
+module.exports=protectedRoute;
+
+//AuthRouter.js
+    if(user){
+        if(user.password==data.password){
+            let uid = user['_id'];         // payload is passing only id
+let token = jwt.sign({payload:uid},JWT_KEY); // payload, secretKey and (HSA alogorithm default)
+             res.cookie('login',token  //just pass has only token only
+         ,{httpOnly:true,secure: true});
+            return res.json({
+                message:"user logined in",
+                userDetails:data
+            });
+        }
+    }
+
 ```
