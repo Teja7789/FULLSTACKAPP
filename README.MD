@@ -1818,12 +1818,16 @@ module.exports=protectedRoute;
 ## step 14 : JWT - (payload,secretKey,algorith) -> Day9 branch
 
 ```Jsx
+npm i jsonwebtoken
+```
+
+```Jsx
 //authHelper
 const  jwt = require('jsonwebtoken');
 const JWT_KEY = "secretkey";
 function protectedRoute(req,res,next){
     if(req.cookies.login){ //login is cookie of login function in authRouter
-        console.log(req.cookies.login,"JWT")
+        console.log(req.cookies.login,"JWT") // ** JWT_STRING =(__.__.__);
         let isVerified = jwt.verify(req.cookies.login,JWT_KEY); //verify the cookies
       if(isVerified){
        next();
