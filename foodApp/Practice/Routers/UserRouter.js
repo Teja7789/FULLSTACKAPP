@@ -1,6 +1,6 @@
 const express = require('express') // import
 //cookies
-const cookie = require('cookie');
+const cookies = require('cookie');
 
 const userModel = require('../Models/UserModel');
 //userRouter
@@ -27,7 +27,7 @@ let users = [{
 
 userRouter
 .route('/')
-.get(getUser)
+.get(protectedRoute,getUser)
 .post(postUser)
 .patch(updateUser)
 .delete(deleteUser)
@@ -50,15 +50,23 @@ async function getUser(req,res){
     let allUsers=await userModel.find();
     // let allUsers=await userModel.findOne({name:"Mani kv"}); //particular user is get
     // res.send(users);
-    res.json({message:'list of all users',
-data:allUsers});
+//     res.json({message:'list of all users',
+// data:allUsers});
+if(allUsers){
+    return res.json(allUsers);
+}else{
+    return res.json({
+        message:'users not found'
+    });
+}
 };
 
 //post method
 
-function postUser(req,res){
+async function postUser(req,res){
     console.log(req.body);
-    users=req.body;
+    // users=req.body;
+    users = await userModel.create(req.body)
     res.json({
         message:"data received sucessfully",
         user:req.body
@@ -84,15 +92,16 @@ async function deleteUser(req,res){
     let user=await userModel.findOneAndDelete(dataToBeDeleted); //delete from frontend
     res.json({
         message:"data deleted successfully",
-        // data:user
+        data:user
     });
     };
 
 
     //params id
-function getUserById(req,res){
-    console.log(req.params.id);
-   let paramId=req.params.id;
+async function getUserById(req,res){
+    // console.log(req.params.id);
+//    let paramId=req.params.id;
+let paramId = await userModel.findById(req.params.id)
    let obj={};
    for(let i=0;i<users.length;i++){
     if(users[i]['id']==paramId){
@@ -117,6 +126,17 @@ function setCookies(req,res){
     let cookies = req.cookie.isLoggedIn;
     console.log(cookies);
     res.send('cookie received');
+}
+// let flag = true;
+
+function protectedRoute(req,res,next){
+    if(req.cookies.isLoggedIn){
+       next();
+    }else{
+        return res.json({
+            message:'operation not allowed'
+        });
+    }
 }
 
 module.exports=userRouter;
