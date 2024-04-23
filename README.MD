@@ -1575,3 +1575,242 @@ const userModel = mongoose.model('userModel',userSchema);
 
 module.exports = userModel;
 ```
+
+## Day8 - cookies - protoctedRoute code
+
+```Jsx
+//UserRouter.js
+const express = require('express') // import
+//cookies
+const cookies = require('cookie');
+
+const userModel = require('../Models/UserModel');
+//userRouter
+const userRouter=express.Router();
+//authHelper
+const protectedRoute = require('./authHelper')
+// app.use(cookieParser());
+// HTTP METHODS
+
+let users = [{
+    "id":1,
+    "name":"abishek"
+},
+{
+    "id":2,
+    "name":"jaiRam"
+},
+{
+    "id":3,
+    "name":"max"
+}
+];
+
+
+
+userRouter
+.route('/')
+.get(protectedRoute,getUser)
+.post(postUser)
+.patch(updateUser)
+.delete(deleteUser)
+
+userRouter 
+.route('/:id')
+.get(getUserById);
+//cookies
+userRouter
+.route('/getCookies')
+.get(getCookies)
+
+userRouter
+.route('/setCookies')
+.get(setCookies)
+
+//get method
+
+async function getUser(req,res){
+    let allUsers=await userModel.find();
+    // let allUsers=await userModel.findOne({name:"Mani kv"}); //particular user is get
+    // res.send(users);
+//     res.json({message:'list of all users',
+// data:allUsers});
+if(allUsers){
+    return res.json(allUsers);
+}else{
+    return res.json({
+        message:'users not found'
+    });
+}
+};
+
+//post method
+
+async function postUser(req,res){
+    console.log(req.body);
+    // users=req.body;
+  users = await userModel.create(req.body)
+    res.json({
+        message:"data received sucessfully",
+        user:req.body
+    });
+};
+
+//update method
+async function updateUser(req,res){
+    console.log("res.body",req.body);
+   let  dataToBeUpdated=req.body;
+    let user= await userModel.findOneAndUpdate({email:'test2b@gmail.com'},dataToBeUpdated);
+   res.json({
+    message:"data updated successfully",
+    data:user
+   })
+};
+
+//delete user
+async function deleteUser(req,res){
+    // users={};
+    // let user=await userModel.findOneAndDelete({email:'testked12@gmail.com'});
+    let dataToBeDeleted=req.body;
+    let user=await userModel.findOneAndDelete(dataToBeDeleted); //delete from frontend
+    res.json({
+        message:"data deleted successfully",
+        data:user
+    });
+    };
+
+
+    //params id
+async function getUserById(req,res){
+    // console.log(req.params.id);
+//    let paramId=req.params.id;
+let paramId = await userModel.findById(req.params.id)
+   let obj={};
+   for(let i=0;i<users.length;i++){
+    if(users[i]['id']==paramId){
+        obj=users[i];
+    }
+   }
+res.json({
+    message:"user data received successfully",
+    data:obj
+});
+}
+
+
+function getCookies(req,res){
+    // res.setHeader('Set-Cookie','isLoggedIn=true')
+res.cookie('isLoggedIn', true,{maxAge:1000*60*60*24,secure: true, httpOnly: true });
+// res.cookie('isPrimeMember',true)
+res.cookie('cookie has been set');
+}
+
+function setCookies(req,res){
+    let cookies = req.cookie.isLoggedIn;
+    console.log(cookies);
+    res.send('cookie received');
+}
+
+
+module.exports=userRouter;
+
+//authRouter.js
+const express = require('express') // import
+const userModel = require('../Models/UserModel');
+//authRouter
+const authRouter=express.Router();
+const cookie = require('cookie');
+//middleware
+authRouter
+.route('/signup')
+.get(middleware1,getSignUp,middleware2) //path specific middleware
+.post(postSignUp);
+
+authRouter
+.route('/login')
+.get(middleware1,getSignUp,middleware2) //path specific middleware
+.post(loginUser);
+//middleware
+function middleware1(req,res,next){
+    console.log('middleware1 encourted');
+    next();
+}
+function middleware2(req,res){
+    console.log('middleware2 encourted');
+    // next();
+    console.log("middleware2 is ended req res cycle");
+    // res.sendFile('/public/index.html',{root:__dirname});
+}
+//signup
+// middleware
+function getSignUp(req,res,next){
+    console.log("get user called");
+    next();
+// res.sendFile('/Users/SIVANANDINI/Desktop/FullstackApp/foodApp/public/index.html');
+// res.sendFile('/public/index.html',{root:__dirname})
+}
+
+async function postSignUp(req,res){
+    // let obj=req.body;
+    let dataObj = req.body;
+    let user=await userModel.create(dataObj);
+    // const {  email,name, password } = req.body
+    // console.log(obj,"backend");
+    console.log(user,"backend");
+    res.json({
+        message:"user signed up",
+        // data:obj
+        dataObj: user
+    });
+}
+async function loginUser(req,res){
+    try{
+    let data=req.body;
+    if(data.email){
+    let user=await userModel.findOne({email:data.email});
+    if(user){
+        if(user.password==data.password){
+             res.cookie('isLoggedIn',true
+         ,{httpOnly:true,secure: true});
+
+            return res.json({
+                message:"user logined in",
+                userDetails:data
+            });
+        }else{
+            return res.json({
+                message:"wrong crendentials"
+            })
+        }
+    }
+    else{
+        return res.json({
+            message:"user not found"
+        })  
+    }
+}else{
+    return res.json({
+        message:"Empty field found"
+    })   
+}
+     }
+     catch(err){
+return res.json({
+    message:err.message
+})  
+     }
+}
+module.exports = authRouter;
+
+//authHelper
+function protectedRoute(req,res,next){
+    if(req.cookies.isLoggedIn){
+       next();
+    }else{
+        return res.json({
+            message:'operation not allowed'
+        });
+    }
+}
+module.exports=protectedRoute;
+```

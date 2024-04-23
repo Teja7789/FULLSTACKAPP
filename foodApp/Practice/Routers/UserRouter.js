@@ -5,7 +5,8 @@ const cookies = require('cookie');
 const userModel = require('../Models/UserModel');
 //userRouter
 const userRouter=express.Router();
-
+//authHelper
+const protectedRoute = require('./authHelper')
 // app.use(cookieParser());
 // HTTP METHODS
 
@@ -66,7 +67,7 @@ if(allUsers){
 async function postUser(req,res){
     console.log(req.body);
     // users=req.body;
-    users = await userModel.create(req.body)
+  users = await userModel.create(req.body)
     res.json({
         message:"data received sucessfully",
         user:req.body
@@ -127,16 +128,6 @@ function setCookies(req,res){
     console.log(cookies);
     res.send('cookie received');
 }
-// let flag = true;
 
-function protectedRoute(req,res,next){
-    if(req.cookies.isLoggedIn){
-       next();
-    }else{
-        return res.json({
-            message:'operation not allowed'
-        });
-    }
-}
 
 module.exports=userRouter;
